@@ -5,7 +5,18 @@ const loginScreen = (props) => {
 	if (props.showLogin === true) {
 		return (
 			<div>
-			Log IN to PLay The BEST Game EvAR
+			  <h1>Login</h1>
+			  <form>
+			    <label>
+			    Account Name:
+			    <input required type="text" name="name" />
+			    Password:
+			    <input required type="text" name="password" />
+			    </label>
+                <input type="submit" value="Submit" />
+                </form>
+
+
 			</div>
 	  )
 	}
