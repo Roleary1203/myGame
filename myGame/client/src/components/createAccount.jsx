@@ -1,16 +1,16 @@
 import React from 'react';
 
-const loginScreen = (props) => {
+const createAccount = (props) => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		props.handleSubmit(e);
 	}
 
-	if (props.showLogin === true) {
+	if (props.showCreateAccount === true) {
 		return (
 			<div>
-			  <h1>Login</h1>
+			  <h1>Create New Account</h1>
 			  <form onSubmit={handleSubmit}>
 			    <label>
 			    Account Name:
@@ -28,4 +28,4 @@ const loginScreen = (props) => {
 	else return null;
 }
 
-export default loginScreen;
+export default createAccount;
