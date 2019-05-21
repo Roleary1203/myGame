@@ -11,6 +11,7 @@ class App extends React.Component {
 		super(props);
 		this.state = {
       currAcc: '',
+      currHero: {},
       heroes: [],
 			showLogin: false,
 			showInn: false,
@@ -34,13 +35,22 @@ class App extends React.Component {
    .catch(err => console.log('CAUGHT', err))
   }
 
- getAccount(accName) {
-    fetch(`/getAccount/${accName}`)
+ getAccount(accInfo) {
+    fetch(`/getAccount/${JSON.stringify(accInfo)}`)
     .then(response => response.json())
     .then(data => {
+      console.log('data: ', data)
+      if (data.length === 0) {
+        alert('Account name or password is Incorrect. Please try again.')
+        this.setState({
+          showHeroSelect: false,
+          showLogin: true
+        })
+      } else {
       this.setState({
         currAcc: data
       })
+    }
       console.log('stateAccount',this.state.currAcc)
     })
     .catch(err => console.log(err))
@@ -58,6 +68,14 @@ class App extends React.Component {
     .catch(err => console.log(err))
   }
 
+  selectHero(hero) {
+    this.setState({
+      currHero: hero,
+      showHeroSelect: false,
+      showInn: true
+    })
+  } 
+
   handleLogin(e) {
     console.log('logging in');
      let data = new FormData(e.target);
@@ -68,6 +86,15 @@ class App extends React.Component {
       accName,
       accPassword
     }
+
+    this.getAccount(loginAccount);
+    this.getAllHeroes(loginAccount.accName);
+    
+    this.setState({
+      showLogin: false,
+      showHeroSelect: true,
+      currAcc: accName
+    })
   }
 
   handleCreateAcc(e) {
@@ -106,14 +133,30 @@ class App extends React.Component {
     })
   }
 
+  handleGoToTitle() {
+    this.setState({
+      showTitle: true,
+      showHeroSelect: false,
+      showLogin: false,
+      showCreateAccount: false
+    })
+  }
+
+  handleeGoToInn() {
+    this.setState({
+      showInn: true,
+      showHeroSelect: false
+    })
+  }
+
   render() {
   	return(
       <div>
-      	<LoginScreen handleSubmit={this.handleLogin.bind(this)} showLogin={this.state.showLogin} />
-      	<Inn showInn={this.state.showInn} />
-      	<HeroSelect showHeroSelect={this.state.showHeroSelect} heroes={this.state.heroes} />
+      	<LoginScreen handleSubmit={this.handleLogin.bind(this)} handleBack={this.handleGoToTitle.bind(this)} showLogin={this.state.showLogin} />
+      	<Inn hero={this.state.currHero} showInn={this.state.showInn} />
+      	<HeroSelect handleSelectHero={this.selectHero.bind(this)} showHeroSelect={this.state.showHeroSelect} handleBack={this.handleGoToTitle.bind(this)} heroes={this.state.heroes} />
       	<CreateHero showCreateHero={this.state.showCreateHero} />
-        <CreateAccount handleSubmit={this.handleCreateAcc.bind(this)} showCreateAccount={this.state.showCreateAccount} />
+        <CreateAccount handleSubmit={this.handleCreateAcc.bind(this)} handleBack={this.handleGoToTitle.bind(this)} showCreateAccount={this.state.showCreateAccount} />
         <TitleScreen handleCreate={this.handleGoToCreateAcc.bind(this)} handleLogin={this.handleGoToLogin.bind(this)} showTitle={this.state.showTitle} />
       </div>
   	)

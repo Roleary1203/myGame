@@ -7,6 +7,10 @@ const createAccount = (props) => {
 		props.handleSubmit(e);
 	}
 
+	const handleBack = () => {
+		props.handleBack();
+	}
+
 	if (props.showCreateAccount === true) {
 		return (
 			<div>
@@ -20,6 +24,8 @@ const createAccount = (props) => {
 			    </label>
                 <input type="submit" value="Submit" />
                 </form>
+                <button onClick={handleBack}>back</button>
+
 
 
 			</div>

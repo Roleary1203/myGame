@@ -7,6 +7,10 @@ const loginScreen = (props) => {
 		props.handleSubmit(e);
 	}
 
+	const handleBack = () => {
+		props.handleBack();
+	}
+
 	if (props.showLogin === true) {
 		return (
 			<div>
@@ -20,6 +24,8 @@ const loginScreen = (props) => {
 			    </label>
                 <input type="submit" value="Submit" />
                 </form>
+                <button onClick={handleBack}>back</button>
+
 
 
 			</div>
