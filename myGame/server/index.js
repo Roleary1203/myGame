@@ -9,8 +9,8 @@ app.use(bodyParser());
 app.use(express.static(__dirname + '/../client/dist'));
 
 app.post('/createAccount', controllers.createAccount);
-app.get('/getHeroes/:name', controllers.getAllHeroes);
-app.get('/getAccount/:accName', controllers.getAccount);
+app.get('/getHeroes/:accName', controllers.getAllHeroes);
+app.get('/getAccount/:accInfo', controllers.getAccount);
 
 
 
