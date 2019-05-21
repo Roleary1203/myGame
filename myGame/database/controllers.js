@@ -12,9 +12,10 @@ exports.createAccount = (req,res) => {
 
 exports.getAccount = (req,res) => {
 	console.log('retrieving account');
-	let accName = req.body.accName;
-	let accPassword = req.body.accPassword.toLowerCase();
-	console.log(req.body);
+	let accInfo = JSON.parse(req.params.accInfo);
+	let accName = accInfo.accName;
+	let accPassword = accInfo.accPassword;
+	console.log('WORK?',accInfo);
 	mysql.db.query(`SELECT accountName FROM player WHERE accountName = '${accName}' AND password = '${accPassword}'`, (err, results) => {
 		err ? res.send(err) : res.send(results);
 	})
@@ -34,8 +35,9 @@ exports.createHero = (req,res) => {
 
 exports.getAllHeroes = (req,res) => {
 	console.log('getting all Heroes')
+	//console.log(req)
 	let accName = req.params.accName;
-	console.log('current hero', accName)
+	console.log('getting heroes for ', accName)
   mysql.db.query(`SELECT * FROM hero WHERE account_id = (SELECT id FROM player where accountName = '${accName}') `, (err, results) => {
     err ? res.send(err) : res.send(results);
   })
