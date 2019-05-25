@@ -3,8 +3,12 @@ import LoginScreen from './login.jsx';
 import Inn from './inn.jsx';
 import HeroSelect from './heroSelect.jsx';
 import CreateHero from './createHero.jsx';
-import CreateAccount from './createAccount.jsx'
-import TitleScreen from './titleScreen.jsx'
+import CreateAccount from './createAccount.jsx';
+import TitleScreen from './titleScreen.jsx';
+import Adventure from './adventure.jsx';
+import Battle from './battle.jsx';
+import Victory from './victory.jsx';
+import helpers from '../../../helpers.js';
 
 class App extends React.Component {
 	constructor(props) {
@@ -12,6 +16,7 @@ class App extends React.Component {
 		this.state = {
       currAcc: '',
       currHero: {},
+      heroStats: {},
       heroes: [],
 			showLogin: false,
 			showInn: false,
@@ -19,6 +24,9 @@ class App extends React.Component {
 			showCreateHero: false,
       showCreateAccount: false,
       showTitle: true,
+      showAdventure: false,
+      showBattle: false,
+      showVictory: false,
 		}
 	}
 
@@ -69,8 +77,9 @@ class App extends React.Component {
   }
 
   selectHero(hero) {
-    this.setState({
+      this.setState({
       currHero: hero,
+      heroStats: helpers.heroStats(hero),
       showHeroSelect: false,
       showInn: true
     })
@@ -119,6 +128,17 @@ class App extends React.Component {
     })
   }
 
+  updateHeroHealth(herohp, enemyad) {
+    this.setState({
+      heroStats: {
+        health: herohp - enemyad,
+        attackDamage: this.state.heroStats.attackDamage,
+        resourceType: this.state.heroStats.resourceType,
+        resource: this.state.heroStats.resource
+      }
+    })
+  }
+
   handleGoToCreateAcc() {
     this.setState({
       showTitle: false,
@@ -142,10 +162,32 @@ class App extends React.Component {
     })
   }
 
-  handleeGoToInn() {
+  handleGoToInn() {
     this.setState({
       showInn: true,
-      showHeroSelect: false
+      showHeroSelect: false,
+      showAdventure: false
+    })
+  }
+
+  handleGoToAdventure() {
+    this.setState({
+      showAdventure: true,
+      showInn: false
+    })
+  }
+
+  handleGoToBattle() {
+    this.setState({
+      showBattle: true,
+      showAdventure: false
+    })
+  }
+
+  handleVictory() {
+    this.setState({
+      showVictory: true,
+      showBattle: false,
     })
   }
 
@@ -153,11 +195,14 @@ class App extends React.Component {
   	return(
       <div>
       	<LoginScreen handleSubmit={this.handleLogin.bind(this)} handleBack={this.handleGoToTitle.bind(this)} showLogin={this.state.showLogin} />
-      	<Inn hero={this.state.currHero} showInn={this.state.showInn} />
+      	<Inn hero={this.state.currHero} heroStats={this.state.heroStats} handleLeave={this.handleGoToAdventure.bind(this)} showInn={this.state.showInn} />
       	<HeroSelect handleSelectHero={this.selectHero.bind(this)} showHeroSelect={this.state.showHeroSelect} handleBack={this.handleGoToTitle.bind(this)} heroes={this.state.heroes} />
       	<CreateHero showCreateHero={this.state.showCreateHero} />
         <CreateAccount handleSubmit={this.handleCreateAcc.bind(this)} handleBack={this.handleGoToTitle.bind(this)} showCreateAccount={this.state.showCreateAccount} />
         <TitleScreen handleCreate={this.handleGoToCreateAcc.bind(this)} handleLogin={this.handleGoToLogin.bind(this)} showTitle={this.state.showTitle} />
+        <Adventure handleFight={this.handleGoToBattle.bind(this)} handleBackToInn={this.handleGoToInn.bind(this)} showAdventure={this.state.showAdventure}/>
+        <Battle handleHeroHealth={this.updateHeroHealth.bind(this)} handleVictory={this.handleVictory.bind(this)} hero={this.state.currHero} heroStats={this.state.heroStats} showBattle={this.state.showBattle} />
+        <Victory showVictory={this.state.showVictory} />
       </div>
   	)
   }
