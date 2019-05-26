@@ -11,6 +11,8 @@ app.use(express.static(__dirname + '/../client/dist'));
 app.post('/createAccount', controllers.createAccount);
 app.get('/getHeroes/:accName', controllers.getAllHeroes);
 app.get('/getAccount/:accInfo', controllers.getAccount);
+app.post('/newHero', controllers.createHero);
+
 
 
 

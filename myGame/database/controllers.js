@@ -26,8 +26,9 @@ exports.createHero = (req,res) => {
 	console.log('creating new hero')
 	let name = req.body.name;
 	let role = req.body.role.toLowerCase();
+	let acc = req.body.acc;
 	console.log(req.body)
-	mysql.db.query(`INSERT INTO hero (heroName, role) VALUES ("${name}", "${role}")`, (err, results) => {
+	mysql.db.query(`INSERT INTO hero (heroName, role, account_id) VALUES ("${name}", "${role}", (SELECT id FROM player WHERE accountName = "${acc}"))`, (err, results) => {
 		err ? res.send(err) : res.send(results);
 	})
 	

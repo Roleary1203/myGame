@@ -5,7 +5,8 @@ class Adventure extends React.Component {
 		super(props)
 		this.state = {
 			accept: false,
-			spokeWithStranger: false
+			spokeWithStranger: false,
+      battlesWon: 0
 		}
 		this.handleAccept = this.handleAccept.bind(this);
 		this.handleFight = this.handleFight.bind(this);

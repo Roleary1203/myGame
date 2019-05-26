@@ -5,14 +5,13 @@ const heroSelect = (props) => {
 	const handleSelectHero = (e) => {
       e.preventDefault()
       var hero = JSON.parse(e.currentTarget.getAttribute('hero'));
-      //var cloneOfHero = JSON.parse(JSON.stringify(hero));
       console.log(hero);
-      //console.log(cloneOfHero);
       props.handleSelectHero(hero);
 	}
 
 	const handleCreate = () => {
 		console.log('CREATE')
+		props.handleCreateHero();
 	}
 
 	const handleDelete = () => {

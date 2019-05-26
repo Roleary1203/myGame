@@ -5,9 +5,13 @@ const createHero = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.handleSubmit(e);
+    props.handleCreateNewHero(e);
+    props.handleBack();
   }
-
+  
+  const handleBack = () => {
+    props.handleBack();
+  }
 
   if (props.showCreateHero === true) {
 	return(
@@ -27,6 +31,7 @@ const createHero = (props) => {
     <input type="submit" value="Submit" />
     </form>
     </div>
+    <button onClick={handleBack}>Back</button>
 
     </div>
 	)

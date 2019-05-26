@@ -43,6 +43,19 @@ class App extends React.Component {
    .catch(err => console.log('CAUGHT', err))
   }
 
+  createHero(newHero) {
+     fetch('/newHero', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newHero)
+    })
+   .then(response => response.json())
+   .then(data => console.log(data))
+   .catch(err => console.log('CAUGHT', err))
+  }
+
  getAccount(accInfo) {
     fetch(`/getAccount/${JSON.stringify(accInfo)}`)
     .then(response => response.json())
@@ -75,6 +88,8 @@ class App extends React.Component {
     })
     .catch(err => console.log(err))
   }
+
+
 
   selectHero(hero) {
       this.setState({
@@ -119,13 +134,33 @@ class App extends React.Component {
     }
 
     this.createAccount(newAccount);
+    this.getAccount(newAccount);
     this.getAllHeroes(accName);
 
     this.setState({
       showCreateAccount: false,
       showHeroSelect: true,
-      currAcc: accName
     })
+  }
+
+   handleCreateHero(e) {
+   let acc = this.state.currAcc[0].accountName;
+   console.log(acc)
+   //get data from form
+    let data = new FormData(e.target);
+    let name = data.get('name')
+    let role = data.get('role')
+    console.log(name + ', ' + role)
+    let newHero = {
+      name,
+      role,
+      acc
+    }
+
+   
+   this.createHero(newHero);
+   this.getAllHeroes(acc);
+   
   }
 
   updateHeroHealth(herohp, enemyad) {
@@ -135,6 +170,17 @@ class App extends React.Component {
         attackDamage: this.state.heroStats.attackDamage,
         resourceType: this.state.heroStats.resourceType,
         resource: this.state.heroStats.resource
+      }
+    })
+  }
+
+  updateHeroResource(amount) {
+    this.setState({
+      heroStats: {
+        health: this.state.heroStats.health,
+        attackDamage:this.state.heroStats.attackDamage,
+        resourceType: this.state.heroStats.resourceType,
+        resource: this.state.heroStats.resource + amount
       }
     })
   }
@@ -159,6 +205,20 @@ class App extends React.Component {
       showHeroSelect: false,
       showLogin: false,
       showCreateAccount: false
+    })
+  }
+
+  handleGoToHeroSelect() {
+    this.setState({
+      showCreateHero: false,
+      showHeroSelect: true
+    })
+  }
+
+  handleGoToCreateHero() {
+    this.setState({
+      showHeroSelect: false,
+      showCreateHero: true
     })
   }
 
@@ -196,12 +256,12 @@ class App extends React.Component {
       <div>
       	<LoginScreen handleSubmit={this.handleLogin.bind(this)} handleBack={this.handleGoToTitle.bind(this)} showLogin={this.state.showLogin} />
       	<Inn hero={this.state.currHero} heroStats={this.state.heroStats} handleLeave={this.handleGoToAdventure.bind(this)} showInn={this.state.showInn} />
-      	<HeroSelect handleSelectHero={this.selectHero.bind(this)} showHeroSelect={this.state.showHeroSelect} handleBack={this.handleGoToTitle.bind(this)} heroes={this.state.heroes} />
-      	<CreateHero showCreateHero={this.state.showCreateHero} />
+      	<HeroSelect handleCreateHero={this.handleGoToCreateHero.bind(this)} handleSelectHero={this.selectHero.bind(this)} showHeroSelect={this.state.showHeroSelect} handleBack={this.handleGoToTitle.bind(this)} heroes={this.state.heroes} />
+      	<CreateHero handleCreateNewHero={this.handleCreateHero.bind(this)} handleBack={this.handleGoToHeroSelect.bind(this)} showCreateHero={this.state.showCreateHero} />
         <CreateAccount handleSubmit={this.handleCreateAcc.bind(this)} handleBack={this.handleGoToTitle.bind(this)} showCreateAccount={this.state.showCreateAccount} />
         <TitleScreen handleCreate={this.handleGoToCreateAcc.bind(this)} handleLogin={this.handleGoToLogin.bind(this)} showTitle={this.state.showTitle} />
         <Adventure handleFight={this.handleGoToBattle.bind(this)} handleBackToInn={this.handleGoToInn.bind(this)} showAdventure={this.state.showAdventure}/>
-        <Battle handleHeroHealth={this.updateHeroHealth.bind(this)} handleVictory={this.handleVictory.bind(this)} hero={this.state.currHero} heroStats={this.state.heroStats} showBattle={this.state.showBattle} />
+        <Battle handleHeroResource={this.updateHeroResource.bind(this)} handleHeroHealth={this.updateHeroHealth.bind(this)} handleVictory={this.handleVictory.bind(this)} hero={this.state.currHero} heroStats={this.state.heroStats} showBattle={this.state.showBattle} />
         <Victory showVictory={this.state.showVictory} />
       </div>
   	)
