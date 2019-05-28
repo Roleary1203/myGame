@@ -15,7 +15,6 @@ exports.getAccount = (req,res) => {
 	let accInfo = JSON.parse(req.params.accInfo);
 	let accName = accInfo.accName;
 	let accPassword = accInfo.accPassword;
-	console.log('WORK?',accInfo);
 	mysql.db.query(`SELECT accountName FROM player WHERE accountName = '${accName}' AND password = '${accPassword}'`, (err, results) => {
 		err ? res.send(err) : res.send(results);
 	})
@@ -32,6 +31,14 @@ exports.createHero = (req,res) => {
 		err ? res.send(err) : res.send(results);
 	})
 	
+}
+
+exports.deleteHero =(req,res) => {
+	let name = req.body.heroName;
+	console.log('deleting hero:' + name);
+	mysql.db.query(`DELETE FROM hero WHERE heroName = '${name}'`, (err,results) => {
+		err ? res.send(err) : res.send(results);
+	})
 }
 
 exports.getAllHeroes = (req,res) => {

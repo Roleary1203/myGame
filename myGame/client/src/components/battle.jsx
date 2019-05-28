@@ -4,11 +4,6 @@ class Battle extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			enemy: {
-				name: 'Lizard',
-				health: 15,
-				damage: 1
-			},
 			turn: 'player',
 			turnNum: 0,
 			combatText: []
@@ -19,48 +14,53 @@ class Battle extends React.Component {
 
 	checkEnemyHealth() {
 		//if enemy dies
-  	if (this.state.enemy.health === 0) {
+  	if (this.props.enemy.health <= 0) {
   		this.state.combatText.push(`enemy dies`);
   		this.setState({
   			combatText: this.state.combatText
   		})
-  		alert(`${this.state.enemy.name} has been defeated`);
+  		alert(`${this.props.enemy.name} has been defeated`);
   		this.props.handleVictory();
-  	}
+      this.setState({
+        turn: 'player',
+        turnNum: 0,
+        combatText: []
+      })
+      return true
+  	} else {
+      return false
+    }
 	}
 
 
   handleAttack() {
-  	var enemyhp = this.state.enemy.health;
-  	var enemyad =this.state.enemy.damage;
+  	var enemyhp = this.props.enemy.health;
+  	var enemyad =this.props.enemy.attackDamage;
   	var herohp = this.props.heroStats.health;
   	var heroad = this.props.heroStats.attackDamage;
     //player attack
     this.state.combatText.push(`You attack the enemy for ${heroad} damage.`);
+    this.props.handleEnemyHealth(enemyhp,heroad);
   	this.setState({
-  		enemy: {
-  			name: this.state.enemy.name,
-  			health: enemyhp - heroad,
-  			damage: this.state.enemy.damage
-  		},
   		turn: 'enemy',
   		turnNum: this.state.turnNum ++,
   		combatText: this.state.combatText
   	})
-  	this.checkEnemyHealth();
 
     //enemy attack
   	setTimeout(() => {
-  		this.checkEnemyHealth();
-        this.props.handleHeroHealth(herohp,enemyad)
+  		if (this.checkEnemyHealth() === true) {
+        return null;
+      } else {
 
-  		this.state.combatText.push(`The enemy attacks you for ${enemyad} damage.`)
-      this.setState({
-        turn: 'player',
-        turnNum: this.state.turnNum ++,
-        combatText: this.state.combatText
-      })
-
+        this.state.combatText.push(`The enemy attacks you for ${enemyad} damage.`)
+        this.props.handleHeroHealth(herohp,enemyad);
+        this.setState({
+          turn: 'player',
+          turnNum: this.state.turnNum ++,
+          combatText: this.state.combatText
+        })
+      }
 
 
   	 }, 5000);
@@ -81,8 +81,8 @@ class Battle extends React.Component {
        <button disabled={this.state.turn === 'enemy'} onClick={this.handleSpecial}>Special Attack</button>
          </div>
          <div>
-         <h1> {this.state.enemy.name} </h1>
-         <h3> {"Health " + this.state.enemy.health}</h3>
+         <h1> {this.props.enemy.name} </h1>
+         <h3> {"Health " + this.props.enemy.health}</h3>
          </div>
          <div>
          {this.state.combatText.map((text,index) => {

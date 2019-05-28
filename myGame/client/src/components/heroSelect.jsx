@@ -10,12 +10,11 @@ const heroSelect = (props) => {
 	}
 
 	const handleCreate = () => {
-		console.log('CREATE')
 		props.handleCreateHero();
 	}
 
 	const handleDelete = () => {
-		console.log('DELETE')
+		props.handleGoToDeleteHero();
 	}
 
 	const handleBack = () => {

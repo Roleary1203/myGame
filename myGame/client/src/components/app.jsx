@@ -3,6 +3,7 @@ import LoginScreen from './login.jsx';
 import Inn from './inn.jsx';
 import HeroSelect from './heroSelect.jsx';
 import CreateHero from './createHero.jsx';
+import DeleteHero from './deleteHero.jsx';
 import CreateAccount from './createAccount.jsx';
 import TitleScreen from './titleScreen.jsx';
 import Adventure from './adventure.jsx';
@@ -16,19 +17,24 @@ class App extends React.Component {
 		this.state = {
       currAcc: '',
       currHero: {},
+      currEnemy: {},
       heroStats: {},
       heroes: [],
 			showLogin: false,
 			showInn: false,
 			showHeroSelect: false,
 			showCreateHero: false,
+      showDeleteHero: false,
       showCreateAccount: false,
       showTitle: true,
       showAdventure: false,
       showBattle: false,
-      showVictory: false,
+      showVictory: false
 		}
 	}
+
+  //enemy XP = (Char Level * 5) + 45
+  //hero xp = (Math.floor(266.7 * 1.5) * level
 
   createAccount(newAccount) {
      fetch('/createAccount', {
@@ -54,6 +60,25 @@ class App extends React.Component {
    .then(response => response.json())
    .then(data => console.log(data))
    .catch(err => console.log('CAUGHT', err))
+  }
+
+  deleteHero(hero) {
+    fetch('/deleteHero/', {
+      method: 'DELETE',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(hero)
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+
+    this.getAllHeroes(this.state.currAcc[0].accountName);
+    this.setState({
+      showDeleteHero: false,
+      showHeroSelect: true
+    })
+  
   }
 
  getAccount(accInfo) {
@@ -92,13 +117,21 @@ class App extends React.Component {
 
 
   selectHero(hero) {
+    console.log('select:', hero)
       this.setState({
       currHero: hero,
       heroStats: helpers.heroStats(hero),
       showHeroSelect: false,
-      showInn: true
+      showInn: true,
+      currEnemy: helpers.enemies(hero.chapter, hero.subChapter)
     })
   } 
+
+  newEnemy() {
+    this.setState({
+      currEnemy: helpers.enemies(this.state.currHero.chapter, this.state.currHero.subChapter)
+    })
+  }
 
   handleLogin(e) {
     console.log('logging in');
@@ -185,6 +218,28 @@ class App extends React.Component {
     })
   }
 
+  updateEnemyHealth(enemyhp, heroad) {
+    this.setState({
+      currEnemy: {
+        name: this.state.currEnemy.name,
+        health: enemyhp - heroad,
+        attackDamage: this.state.currEnemy.attackDamage
+      }
+    })
+  }
+
+  handleLevelUp() {
+    this.setState({
+        heroName: this.state.currHero.heroName,
+        level: this.state.currHero.level++,
+        xp: 0,
+        role: this.state.currHero.role,
+        chapter: this.state.currHero.chapter,
+        subChapter: this.state.currHero.subChapter
+    })
+  }
+
+
   handleGoToCreateAcc() {
     this.setState({
       showTitle: false,
@@ -222,6 +277,13 @@ class App extends React.Component {
     })
   }
 
+  handleGoToDeleteHero() {
+    this.setState({
+      showHeroSelect: false,
+      showDeleteHero: true
+    })
+  }
+
   handleGoToInn() {
     this.setState({
       showInn: true,
@@ -246,9 +308,45 @@ class App extends React.Component {
 
   handleVictory() {
     this.setState({
+      currHero: {
+        heroName: this.state.currHero.heroName,
+        level: this.state.currHero.level,
+        xp: this.state.currHero.xp + (this.state.currHero.level * 5) + 45,
+        role: this.state.currHero.role,
+        chapter: this.state.currHero.chapter,
+        subChapter: this.state.currHero.subChapter
+      },
       showVictory: true,
       showBattle: false,
     })
+  }
+
+  handleNextChapter() {
+    this.setState({
+      currHero: {
+        heroName: this.state.currHero.heroName,
+        level: this.state.currHero.level,
+        xp: this.state.currHero.xp,
+        role: this.state.currHero.role,
+        chapter: this.state.currHero.chapter + 1,
+        subChapter: this.state.currHero.subChapter
+      }
+    })
+  }
+
+  handleNextSubChapter() {  
+  this.setState({
+      currHero: {
+        heroName: this.state.currHero.heroName,
+        level: this.state.currHero.level,
+        xp: this.state.currHero.xp,
+        role: this.state.currHero.role,
+        chapter: this.state.currHero.chapter,
+        subChapter: this.state.currHero.subChapter + 1
+      },
+      showVictory: false,
+      showAdventure: true,
+    }) 
   }
 
   render() {
@@ -256,13 +354,14 @@ class App extends React.Component {
       <div>
       	<LoginScreen handleSubmit={this.handleLogin.bind(this)} handleBack={this.handleGoToTitle.bind(this)} showLogin={this.state.showLogin} />
       	<Inn hero={this.state.currHero} heroStats={this.state.heroStats} handleLeave={this.handleGoToAdventure.bind(this)} showInn={this.state.showInn} />
-      	<HeroSelect handleCreateHero={this.handleGoToCreateHero.bind(this)} handleSelectHero={this.selectHero.bind(this)} showHeroSelect={this.state.showHeroSelect} handleBack={this.handleGoToTitle.bind(this)} heroes={this.state.heroes} />
+      	<HeroSelect handleCreateHero={this.handleGoToCreateHero.bind(this)} handleSelectHero={this.selectHero.bind(this)} handleGoToDeleteHero={this.handleGoToDeleteHero.bind(this)} showHeroSelect={this.state.showHeroSelect} handleBack={this.handleGoToTitle.bind(this)} heroes={this.state.heroes} />
       	<CreateHero handleCreateNewHero={this.handleCreateHero.bind(this)} handleBack={this.handleGoToHeroSelect.bind(this)} showCreateHero={this.state.showCreateHero} />
+        <DeleteHero handleDeleteHero={this.deleteHero.bind(this)} heroes={this.state.heroes} showDeleteHero={this.state.showDeleteHero} />
         <CreateAccount handleSubmit={this.handleCreateAcc.bind(this)} handleBack={this.handleGoToTitle.bind(this)} showCreateAccount={this.state.showCreateAccount} />
         <TitleScreen handleCreate={this.handleGoToCreateAcc.bind(this)} handleLogin={this.handleGoToLogin.bind(this)} showTitle={this.state.showTitle} />
-        <Adventure handleFight={this.handleGoToBattle.bind(this)} handleBackToInn={this.handleGoToInn.bind(this)} showAdventure={this.state.showAdventure}/>
-        <Battle handleHeroResource={this.updateHeroResource.bind(this)} handleHeroHealth={this.updateHeroHealth.bind(this)} handleVictory={this.handleVictory.bind(this)} hero={this.state.currHero} heroStats={this.state.heroStats} showBattle={this.state.showBattle} />
-        <Victory showVictory={this.state.showVictory} />
+        <Adventure nextChapter={this.handleNextChapter.bind(this)} handleFight={this.handleGoToBattle.bind(this)} handleBackToInn={this.handleGoToInn.bind(this)} hero={this.state.currHero} enemy={this.state.currEnemy} newEnemy={this.newEnemy.bind(this)} showAdventure={this.state.showAdventure}/>
+        <Battle handleHeroResource={this.updateHeroResource.bind(this)} handleHeroHealth={this.updateHeroHealth.bind(this)} handleEnemyHealth={this.updateEnemyHealth.bind(this)} handleVictory={this.handleVictory.bind(this)} hero={this.state.currHero} heroStats={this.state.heroStats} enemy={this.state.currEnemy} showBattle={this.state.showBattle} />
+        <Victory handleLevelUp={this.handleLevelUp.bind(this)} handleContinue={this.handleNextSubChapter.bind(this)} showVictory={this.state.showVictory} hero={this.state.currHero} />
       </div>
   	)
   }

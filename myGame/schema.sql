@@ -16,6 +16,10 @@ CREATE TABLE hero(
   heroName varchar(16) NOT NULL UNIQUE,
   role varchar(16) NOT NULL,
   level int NOT NULL DEFAULT 1,
+  xp int NOT NULL DEFAULT 0,
+  gold int NOT NULL DEFAULT 0,
+  chapter int NOT NULL DEFAULT 0,
+  subChapter int NOT NULL DEFAULT 1,
   account_id int NOT NULL,
   FOREIGN KEY (account_id) REFERENCES player(id) ON DELETE CASCADE,
   PRIMARY KEY(hero_id)

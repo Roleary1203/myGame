@@ -12,6 +12,7 @@ app.post('/createAccount', controllers.createAccount);
 app.get('/getHeroes/:accName', controllers.getAllHeroes);
 app.get('/getAccount/:accInfo', controllers.getAccount);
 app.post('/newHero', controllers.createHero);
+app.delete('/deleteHero', controllers.deleteHero);
 
 
 

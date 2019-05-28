@@ -4,9 +4,8 @@ class Adventure extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			accept: false,
+      chapterCompleted: false,
 			spokeWithStranger: false,
-      battlesWon: 0
 		}
 		this.handleAccept = this.handleAccept.bind(this);
 		this.handleFight = this.handleFight.bind(this);
@@ -16,9 +15,7 @@ class Adventure extends React.Component {
  
 
   handleAccept() {
-  	this.setState({
-  		accept: true
-    })
+    this.props.nextChapter();
   } 
 
   handleBackToInn() {
@@ -29,7 +26,8 @@ class Adventure extends React.Component {
   }
 
   handleFight() {
-  	this.props.handleFight();
+    this.props.newEnemy();
+    this.props.handleFight();
   }
 
   handleRun() {
@@ -45,8 +43,13 @@ class Adventure extends React.Component {
 
   render() {
 
-  if (this.props.showAdventure === true && this.state.spokeWithStranger === false && this.state.accept === false) {
+    const check = this.props.showAdventure === true;
+    const chapter = this.props.hero.chapter;
+    const subChapter = this.props.hero.subChapter;
+
+  if (check === true && this.state.spokeWithStranger === false && chapter === 0) {
   	return (
+      //intro quest
     <div>
       <p> Cloaked Stranger: Hello there, you look like you can help me and this village. You are new here but I must tell you there is an evil lizard monster that lives not to far from here.</p>
       <p> He and his minions are a terror. I was wondering if you think you could go and stop this monster once and for all?</p>
@@ -56,17 +59,19 @@ class Adventure extends React.Component {
       <button onClick={this.handleBackToInn}> Back to Inn </button>
     </div>
   	)
-  } else if (this.props.showAdventure === true && this.state.accept === true) {
+  } else if (check === true && chapter === 1 && subChapter === 1) {
   	return (
+      //begin chapter 1
       <div>
-      <h3>QUEST 1: Stopping the Lizard</h3>
-      <p> Lizard man: You have entered the lizard kings territory!! You will never leave!! ARGRgRGRGGrrgRG </p>
+      <h3>CHAPTER 1: Stopping the Lizard</h3>
+      <p> {`${this.props.enemy.name}: You have entered the lizard kings territory!! You will never leave!! ARGRgRGRGGrrgRG`} </p>
       <button onClick={this.handleFight}>Fight</button>
       <button onClick={this.handleRun}>Run</button>
       </div>
   	)
-  } else if (this.props.showAdventure === true && this.state.spokeWithStranger === true) {
+  } else if (check === true && this.state.spokeWithStranger === true) {
   	return(
+      //if didnt accept intro
   		<div>
     <p> Cloaked Stranger: Hello again, I hope you are now able to help me now. He is still up the path and needs to be stopped.</p>
     <p> Please, will you now go and put an end to his evil reign? </p>
@@ -74,11 +79,44 @@ class Adventure extends React.Component {
       <button onClick={this.handleAccept}> Accept and follow path</button>
       <button onClick={this.handleBackToInn}> Back to Inn </button>
       </div>
-
-
-
-  	)
-  } else return null;
+    )
+  } else if (check === true && chapter === 1 && subChapter === 2) {
+    return (
+      <div>
+      <h3>CHAPTER 1: Stopping the Lizard</h3>
+      <p> {`${this.props.enemy.name}: WHERE ONE FALLS ANOTHER WILL RISE!!!! FOR THE LIZARD KING!!!!`} </p>
+      <button onClick={this.handleFight}>Fight</button>
+      <button onClick={this.handleRun}>Run</button>
+      </div>
+    )
+  } else if (check === true && chapter === 1 && subChapter === 3) {
+      return (
+      <div>
+      <h3>CHAPTER 1: Stopping the Lizard</h3>
+      <p> {`${this.props.enemy.name}: I'll kill you in one swift strike...`} </p>
+      <button onClick={this.handleFight}>Fight</button>
+      <button onClick={this.handleRun}>Run</button>
+      </div>
+      )
+  } else if (check === true && chapter === 1 && subChapter === 4) {
+      return (
+      <div>
+      <h3>CHAPTER 1: Stopping the Lizard</h3>
+      <p> {`${this.props.enemy.name}: You wont get by me. I give my life to protect the king!!`} </p>
+      <button onClick={this.handleFight}>Fight</button>
+      <button onClick={this.handleRun}>Run</button>
+      </div>
+      )
+  } else if (check === true && chapter === 1 && subChapter === 5) {
+     return (
+      <div>
+      <h3>CHAPTER 1: Stopping the Lizard</h3>
+      <p> {`${this.props.enemy.name}: You....you have slain my best men, I will show you true strength! Die by my hand you puny softskin!!`} </p>
+      <button onClick={this.handleFight}>Fight</button>
+      <button onClick={this.handleRun}>Run</button>
+      </div>
+      )
+   } else return null;
 }
 }
 
