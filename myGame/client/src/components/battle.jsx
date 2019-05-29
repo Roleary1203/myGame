@@ -52,7 +52,7 @@ class Battle extends React.Component {
   		if (this.checkEnemyHealth() === true) {
         return null;
       } else {
-
+        
         this.state.combatText.push(`The enemy attacks you for ${enemyad} damage.`)
         this.props.handleHeroHealth(herohp,enemyad);
         this.setState({

@@ -6,6 +6,10 @@ const inn = (props) => {
 		props.handleLeave();
 	}
 
+  const handleSleep = () => {
+    props.handleSleep();
+  }
+
 	 var tableStyle = {
        "border": "1px solid black",
        "width": "333px",
@@ -18,7 +22,7 @@ if (props.showInn === true) {
 		<p>Greetings Traveler, how can I assist you?</p>
 
 
-		<button>Sleep</button>
+		<button onClick={handleSleep}>Sleep</button>
 		<button>Buy</button>
 		<button onClick={handleLeave}>Leave</button>
 

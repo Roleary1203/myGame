@@ -4,13 +4,14 @@ class Adventure extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-      chapterCompleted: false,
 			spokeWithStranger: false,
 		}
 		this.handleAccept = this.handleAccept.bind(this);
 		this.handleFight = this.handleFight.bind(this);
 		this.handleBackToInn = this.handleBackToInn.bind(this);
 		this.handleRun = this.handleRun.bind(this);
+    this.endDemo = this.endDemo.bind(this);
+    this.handleBackToTitle = this.handleBackToTitle.bind(this);
 	}
  
 
@@ -31,6 +32,7 @@ class Adventure extends React.Component {
   }
 
   handleRun() {
+    this.props.newEnemy();
   	let roll = Math.floor(Math.random() * 100)+ 1
     console.log(roll)
   	if (roll <= 25) {
@@ -39,6 +41,14 @@ class Adventure extends React.Component {
   	} else {
   		this.props.handleBackToInn();
   	}
+  }
+
+  endDemo() {
+   this.props.endDemo();
+  }
+
+  handleBackToTitle() {
+    this.props.handleBackToTitle();
   }
 
   render() {
@@ -116,7 +126,29 @@ class Adventure extends React.Component {
       <button onClick={this.handleRun}>Run</button>
       </div>
       )
+   } else if (check === true && chapter === 1 && subChapter === 6) {
+    return (
+       <div>
+       <h2> Chapter 1 Completed!! </h2>
+       <p> Cloaked Stranger: Hello! You have returned successfully...I am not surprised.</p>
+       <p> You have earned yourself a reward. Meet with me inside tomorrow morning. Ask the innkeeper about the Raven statue</p>
+       <p> {`Until we meet again ${this.props.hero.heroName}...`} </p>
+       <p><i> The cloaked stranged turns and walks quickly into the darkness</i></p>
+       <button onClick={this.endDemo}>Continue</button>
+       </div>
+     )
+   } else if (check === true && this.props.end === true) {
+    return (
+      <div>
+      <h3> You have completed this Demo!! </h3>
+       <p> Thank you for playing!! </p>
+       <p> This is an ongoing project that will be updated and expanded upon </p>
+       <p> Goodbye and thanks again! </p>
+       <button onClick={this.handleBackToTitle}> Back to Title Screen </button>
+       </div>
+      )
    } else return null;
+
 }
 }
 
